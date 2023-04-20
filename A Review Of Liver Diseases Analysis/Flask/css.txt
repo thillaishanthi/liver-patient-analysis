@@ -1,0 +1,76 @@
+__ )= our flask app
+
+@app.route('/') # rendering the html template
+
+def home():
+
+return render_template('home.html')
+
+@app.route('/predict') # rendering the html template
+
+def index():
+
+return render_template("index.html")
+app.route('/data_predict', methods=['POST']) route for our prediction predict():
+
+age = request.form["age"] requesting for age esta
+
+gender = request.form("gender"] = requesting for pr
+
+tb = request.form['to'] resting for Total Bilirubin mate
+
+db-request.form['db'] = requesting for Direct linein date
+
+ap-request.form['ap'] requesting for Acealine Phosphatase este
+
+aal = request.form['aal'] = requesting for Alarine Aminotransferase deta
+
+8a2 = request.form['aa2'] requesting for Aspartate Aminotransferase mate
+
+tp = request.form['tp'] requesting for total Protiens dato
+
+a = request.form['a'] requesting for Albumin asto agr = request.form['agr') requesting for Albarin, and Globulin fatte data
+
+coverting date into float format
+
+data = [[float(age), float (gender), float(tb), float(db), float(ap), float(aai), float(882), float(tp),
+
+model = pickle.load(open('liver_analysis.pk1', 'rb'))
+
+prediction= model.predict(data)[0]
+
+return render_template("noChance.html", prediction You have a liver desease problem, You must and
+
+return render_template('chance.html', prediction-"You dont have a liver desease probles')
+
+1! (prediction == 1):
+
+app.run()
+app.route('/data_predict', methods=['POST']) route for our prediction predict():
+
+age = request.form["age"] requesting for age esta
+
+gender = request.form("gender"] = requesting for pr
+
+tb = request.form['to'] resting for Total Bilirubin mate
+
+db-request.form['db'] = requesting for Direct linein date
+
+ap-request.form['ap'] requesting for Acealine Phosphatase este
+
+aal = request.form['aal'] = requesting for Alarine Aminotransferase deta
+
+8a2 = request.form['aa2'] requesting for Aspartate Aminotransferase mate
+
+tp = request.form['tp'] requesting for total Protiens dato
+
+a = request.form['a'] requesting for Albumin asto agr = request.form['agr') requesting for Albarin, and Globulin fatte data
+
+coverting date into float format
+
+data = [[float(age), float (gender…
+pase) D:\TheSmartBridge\Projects\2. DrugClassification\Drug Serving Flask app "app" (lazy loading) Environment: production
+
+WARNING: This is a development server. Do not use it in a p Use a production WSGI server instead.
+
+Debug mode: off Running on http://127.0.0.1:5000/ (Press CTRL+C to quit)

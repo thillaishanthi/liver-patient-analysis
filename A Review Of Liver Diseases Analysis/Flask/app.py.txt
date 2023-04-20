@@ -1,0 +1,678 @@
+from flask import Flask, render_template, request # Flask is a application
+# used to run/serve our application
+# request is used to access the file which is uploaded by the user in out application
+# render_template is used for rendering the html pages
+import pickle # pickle is used for serializing and de-serializing Python object structures
+
+
+app=Flask(__name__) # our flask app
+
+@app.route('/') # rendering the html template
+def home():
+    return render_template('home.html')
+@app.route('/predict') # rendering the html template
+def index() :
+    return render_template("index.html")
+
+@app.route('/data_predict', methods=['POST']) # route for our prediction
+def predict():
+    age = request.form['age'] # requesting for age data
+    gender = request.form['gender'] # requesting for gender data
+    tb = request.form['tb'] # requesting for Total_Bilirubin data
+    db = request.form['db'] # requesting for Direct_Bilirubin data
+    ap = request.form['ap'] # requesting for Alkaline_Phosphotase data
+    aa1 = request.form['aa1'] # requesting for Alamine_Aminotransferase data
+    aa2 = request.form['aa2'] # requesting for Aspartate_Aminotransferase data
+    tp = request.form['tp'] # requesting for Total_Protiens data
+    a = request.form['a'] # requesting for Albumin data
+    agr = request.form['agr'] # requesting for Albumin_and_Globulin_Ratio data
+    
+    # coverting data into float format
+    data = [[float(age), float(gender), float(tb), float(db), float(ap), float(aa1), float(aa2), float(tp), float(a), float(agr)]]
+    
+    # loading model which we saved
+    model = pickle.load(open('liver_analysis.pkl', 'rb'))
+    
+    prediction= model.predict(data)[0]
+    if (prediction == 1):
+        return render_template('noChance.html', prediction='You have a liver desease problem, You must and should consult a doctor. Take care')
+    else:
+        return render_template('chance.html', prediction='You dont have a liver desease problem')
+
+if __name__ == '__main__':
+    app.run()
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Liver Patient Analysis</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<style type="text/css">
+		body{
+			background-color: #ffcf0059;
+		}
+		.page-header{
+			background-color: blue;
+			width: 100%;
+			height: auto;
+			text-align: center;
+			padding-top: 5px;
+			color: #fff;
+		}
+		h1{
+			font-size: 40px;
+			font-weight: bold;
+		}
+		h3{
+			font-size: 20px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				 <div class="page-header">
+    				<h1>Liver Patient Prediction</h1>
+  				</div>
+			</div>
+		</div>
+	</div>
+
+	
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="p-2 my-2 border">
+			  		<h3>{{prediction}}</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+  <style type="text/css">
+  	body{
+			background-color: #ffcf0059;
+		}
+  	nav{
+  		background-color: #ad38c2;
+  		height: 60px;
+  	}
+  	.navbar-brand{
+  		color: white;
+  		font-size: 30px
+  	}
+
+  	nav ul li a{
+  		color: white;	
+  		font-size: 20px
+  	}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">Liver Patient Analysis</a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+    	<li><a href="#">Home</a></li>
+      <li><a href="/predict">Goto Predict</a></li>
+    </ul>
+  </div>
+</nav>
+  
+<div class="container">
+  <h3>Introduction</h3>
+  <p>Liver diseases averts the normal function of the liver. Mainly due to the large amount of alcohol consumption liver disease arises. Early prediction of liver disease using classification algorithms is an efficacious task that can help the doctors to diagnose the disease within a short duration of time. Discovering the existence of liver disease at an early stage is a complex task for the doctors. The main objective of this paper is to analyse the parameters of various classification algorithms and compare their predictive accuracies so as to find out the best classifier for determining the liver disease. This paper focuses on the related works of various authors on liver disease such that algorithms were implemented using Weka tool that is a machine learning software written in Java. Various attributes that are essential in the prediction of liver disease were examined and the dataset of liver patients were also evaluated. This paper compares various classification algorithms such as Random Forest, Logistic Regression and Separation Algorithm with an aim to identify the best technique. Based on this study, Random Forest with the highest accuracy outperformed the other algorithms and can be further utilised in the prediction of liver diseaserecommended </p>
+</div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Liver Patient Analysis</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<style type="text/css">
+		body{
+			background-color: #ffcf0059;
+		}
+		.page-header{
+			background-color: blue;
+			width: 100%;
+			height: auto;
+			text-align: center;
+			padding-top: 5px;
+			color: #fff;
+		}
+		h1{
+			font-size: 40px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				 <div class="page-header">
+    				<h1>Liver Patient Prediction</h1>
+  				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<form action="/data_predict" method="POST">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="age">Age:</label>
+							    <input type="text" class="form-control" id="age" name="age">
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="gender">Gender:</label>
+							    <input type="text" class="form-control" id="gender" name="gender" placeholder="Enter 0 as male, 1 as female">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="tb">Total_Bilirubin:</label>
+							    <input type="text" class="form-control" id="tb" name="tb">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="db">Direct_Bilirubin:</label>
+							    <input type="text" class="form-control" id="db" name="db">
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="ap">Alkaline_Phosphotase:</label>
+							    <input type="text" class="form-control" id="ap" name="ap">
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="aa1">Alamine_Aminotransferase:</label>
+							    <input type="text" class="form-control" id="aa1" name="aa1">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="aa2">Aspartate_Aminotransferase:</label>
+							    <input type="text" class="form-control" id="aa2" name="aa2">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="tp">Total_Protiens:</label>
+							    <input type="text" class="form-control" id="tp" name="tp">
+							</div>
+						</div>
+					</div>
+
+					
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="a">Albumin:</label>
+							    <input type="text" class="form-control" id="a" name="a">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="agr">Albumin_and_Globulin_Ratio:</label>
+							    <input type="text" class="form-control" id="agr" name="agr">
+							</div>
+						</div>
+					</div>
+				
+
+
+					<button type="submit" class="btn btn-default">Predict</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script
+</body>
+</html>
+import numpy as np
+import pickle
+import joblib
+import matplotlib
+import matplotlib.pyplot as plt
+import time
+import pandas
+import os
+from flask import Flask, request, jsonify, render_template
+import json
+
+import requests
+
+# NOTE: you must manually set API_KEY below using information retrieved from your IBM Cloud account.
+API_KEY = "urHgj6ezHeupOaICaGF1G1gNu-Uu4dQW1vQ2QZ0pjO4d"
+token_response = requests.post('https://iam.cloud.ibm.com/identity/token', data={"apikey": API_KEY, "grant_type": 'urn:ibm:params:oauth:grant-type:apikey'})
+mltoken = token_response.json()["access_token"]
+
+header = {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + mltoken}
+
+# NOTE: manually define and pass the array(s) of values to be scored in the next line
+#payload_scoring = {"input_data": [{"fields": [array_of_input_fields], "values": [array_of_values_to_be_scored, another_array_of_values_to_be_scored]}]}
+
+#response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/8e16b491-9bb5-40c2-9ded-a3094b4de776/predictions?version=2021-11-10', json=payload_scoring, headers={'Authorization': 'Bearer ' + mltoken})
+#print("Scoring response")
+#print(response_scoring.json())
+
+
+app = Flask(__name__)
+
+scale = pickle.load(open('C:/Users/SmartbridgePC/Desktop/AIML/Guided projects/rainfall_prediction/IBM end point deploy/scale.pkl','rb'))
+
+@app.route('/')# route to display the home page
+def home():
+    return render_template('index.html') #rendering the home page
+
+@app.route('/predict',methods=["POST","GET"])# route to show the predictions in a web UI
+def predict():
+    #  reading the inputs given by the user
+    Location = request.form["Location"]
+    MinTemp = request.form["MinTemp"]
+    MaxTemp = request.form["MaxTemp"]
+    Rainfall = request.form["Rainfall"]
+    WindGustSpeed = request.form["WindGustSpeed"]
+    WindSpeed9am = request.form["WindSpeed9am"]
+    WindSpeed3pm = request.form["WindSpeed3pm"]
+    Humidity9am = request.form["Humidity9am"]
+    Humidity3pm = request.form["Humidity3pm"]
+    Pressure9am = request.form["Pressure9am"]
+    Pressure3pm = request.form["Pressure3pm"]
+    Temp9am = request.form["Temp9am"]
+    Temp3pm = request.form["Temp3pm"]
+    RainToday = request.form["RainToday"]
+    WindGustDir = request.form["WindGustDir"]
+    WindDir9am = request.form["WindDir9am"]
+    WindDir3pm = request.form["WindDir3pm"]
+    year = request.form["year"]
+    month = request.form["month"]
+    day = request.form["day"]
+    t = [[int(Location),int(MinTemp),int(MaxTemp),int(Rainfall),
+          int(WindGustSpeed),int(WindSpeed9am),int(WindSpeed3pm),int(Humidity9am),int(Humidity3pm),
+          int(Pressure9am),int(Pressure3pm),int(Temp9am),int(Temp3pm),int(RainToday),
+          int(WindGustDir),int(WindDir9am),int(WindDir3pm),int(year),int(month),int(day)]]
+    payload_scoring = {"input_data": [{"field": [['Location', 'MinTemp', 'MaxTemp', 'Rainfall', 'WindGustSpeed',
+       'WindSpeed9am', 'WindSpeed3pm', 'Humidity9am', 'Humidity3pm',
+       'Pressure9am', 'Pressure3pm', 'Temp9am', 'Temp3pm', 'RainToday',
+       'WindGustDir', 'WindDir9am', 'WindDir3pm', 'year', 'month', 'day']], "values": t}]}
+
+    response_scoring = requests.post('https://us-south.ml.cloud.ibm.com/ml/v4/deployments/8e16b491-9bb5-40c2-9ded-a3094b4de776/predictions?version=2021-11-10', json=payload_scoring, headers={'Authorization': 'Bearer ' + mltoken})
+    print("Scoring response")
+    predictions = response_scoring.json()
+    pred = predictions[predictions][0]['values'][0][0]
+    if(pred=="Yes"):
+        
+        return render_template('chance.html')
+    else:
+     # predictions using the loaded model file
+        return render_template('nochance.html')
+     # showing the prediction results in a UI
+if __name__=="__main__":
+    
+    # app.run(host='0.0.0.0', port=8000,debug=True)    # running the app
+    port=int(os.environ.get('PORT',5000))
+    app.run(port=port,debug=True,use_reloader=False)
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Liver Patient Analysis</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<style type="text/css">
+		body{
+			background-color: #ffcf0059;
+		}
+		.page-header{
+			background-color: blue;
+			width: 100%;
+			height: auto;
+			text-align: center;
+			padding-top: 5px;
+			color: #fff;
+		}
+		h1{
+			font-size: 40px;
+			font-weight: bold;
+		}
+		h3{
+			font-size: 20px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				 <div class="page-header">
+    				<h1>Liver Patient Prediction</h1>
+  				</div>
+			</div>
+		</div>
+	</div>
+
+	
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="p-2 my-2 border">
+			  		<h3>{{prediction}}</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+
+  <style type="text/css">
+  	body{
+			background-color: #ffcf0059;
+		}
+  	nav{
+  		background-color: #ad38c2;
+  		height: 60px;
+  	}
+  	.navbar-brand{
+  		color: white;
+  		font-size: 30px
+  	}
+
+  	nav ul li a{
+  		color: white;	
+  		font-size: 20px
+  	}
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <a class="navbar-brand">Liver Patient Analysis</a>
+    </div>
+    <ul class="nav navbar-nav navbar-right">
+    	<li><a href="#">Home</a></li>
+      <li><a href="/predict">Goto Predict</a></li>
+    </ul>
+  </div>
+</nav>
+  
+<div class="container">
+  <h3>Introduction</h3>
+  <p>Liver diseases averts the normal function of the liver. Mainly due to the large amount of alcohol consumption liver disease arises. Early prediction of liver disease using classification algorithms is an efficacious task that can help the doctors to diagnose the disease within a short duration of time. Discovering the existence of liver disease at an early stage is a complex task for the doctors. The main objective of this paper is to analyse the parameters of various classification algorithms and compare their predictive accuracies so as to find out the best classifier for determining the liver disease. This paper focuses on the related works of various authors on liver disease such that algorithms were implemented using Weka tool that is a machine learning software written in Java. Various attributes that are essential in the prediction of liver disease were examined and the dataset of liver patients were also evaluated. This paper compares various classification algorithms such as Random Forest, Logistic Regression and Separation Algorithm with an aim to identify the best technique. Based on this study, Random Forest with the highest accuracy outperformed the other algorithms and can be further utilised in the prediction of liver diseaserecommended </p>
+</div>
+
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Liver Patient Analysis</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<style type="text/css">
+		body{
+			background-color: #ffcf0059;
+		}
+		.page-header{
+			background-color: blue;
+			width: 100%;
+			height: auto;
+			text-align: center;
+			padding-top: 5px;
+			color: #fff;
+		}
+		h1{
+			font-size: 40px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				 <div class="page-header">
+    				<h1>Liver Patient Prediction</h1>
+  				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<form action="/data_predict" method="POST">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="age">Age:</label>
+							    <input type="text" class="form-control" id="age" name="age">
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="gender">Gender:</label>
+							    <input type="text" class="form-control" id="gender" name="gender" placeholder="Enter 0 as male, 1 as female">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="tb">Total_Bilirubin:</label>
+							    <input type="text" class="form-control" id="tb" name="tb">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="db">Direct_Bilirubin:</label>
+							    <input type="text" class="form-control" id="db" name="db">
+							</div>
+						</div>
+					</div>
+
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="ap">Alkaline_Phosphotase:</label>
+							    <input type="text" class="form-control" id="ap" name="ap">
+							</div>
+						</div>
+
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="aa1">Alamine_Aminotransferase:</label>
+							    <input type="text" class="form-control" id="aa1" name="aa1">
+							</div>
+						</div>
+					</div>
+
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="aa2">Aspartate_Aminotransferase:</label>
+							    <input type="text" class="form-control" id="aa2" name="aa2">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="tp">Total_Protiens:</label>
+							    <input type="text" class="form-control" id="tp" name="tp">
+							</div>
+						</div>
+					</div>
+
+					
+					
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="a">Albumin:</label>
+							    <input type="text" class="form-control" id="a" name="a">
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+							    <label for="agr">Albumin_and_Globulin_Ratio:</label>
+							    <input type="text" class="form-control" id="agr" name="agr">
+							</div>
+						</div>
+					</div>
+				
+
+
+					<button type="submit" class="btn btn-default">Predict</button>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script
+</body>
+</html>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Liver Patient Analysis</title>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+	<style type="text/css">
+		body{
+			background-color: #ffcf0059;
+		}
+		.page-header{
+			background-color: blue;
+			width: 100%;
+			height: auto;
+			text-align: center;
+			padding-top: 5px;
+			color: #fff;
+		}
+		h1{
+			font-size: 40px;
+			font-weight: bold;
+		}
+		h3{
+			color: red;
+			font-size: 20px;
+			font-weight: bold;
+		}
+	</style>
+</head>
+<body>
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				 <div class="page-header">
+    				<h1>Liver Patient Prediction</h1>
+  				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3"></div>
+			<div class="col-md-6">
+				<div class="p-2 my-2 border">
+			  		<h3>{{prediction}}</h3>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Latest compiled and minified JavaScript -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script
+</body>
+</html>
+https://drive.google.com/drive/folders/137m0333mJBcr_mHMKmXzKFrEYL-xqYDC
